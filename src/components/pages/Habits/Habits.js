@@ -10,6 +10,7 @@ let key = 0;
 export default function Habits() {
     const [habits, setHabits] = useState([]);
     const [newHabit, setNewHabit] = useState({title: "", daysSelecteds:[]});
+    const [showNewHabitForm, setShowNewHabitForm] = useState(false);
 
     function saveNewHabit(title) {
         newHabit["key"] = key;
@@ -17,7 +18,15 @@ export default function Habits() {
         key++;
         setHabits([...habits,newHabit]);
         setNewHabit({title: "", daysSelecteds:[]});
+        setShowNewHabitForm(false);
+    }
 
+    function deleteHabit(habitId) {
+        setHabits(habits.map(habit => habit.id !== habitId));
+    }
+
+    function addHabit() {
+        setShowNewHabitForm(() => !showNewHabitForm);
     }
     
     return (
@@ -26,7 +35,7 @@ export default function Habits() {
             <HabitsContainer>
                 <section className="title">
                     <p>Meus Hábitos</p>
-                    <Button width="40" height="40">+</Button>
+                    <Button width="40" height="40" onClick={addHabit}>+</Button>
                 </section>
                 {
                     habits.length === 0 ?
@@ -35,7 +44,10 @@ export default function Habits() {
                             <p className="noHabitsText">Você não tem nenhum hábito cadastrado ainda. Adicione um hábito para começar a trackear!</p>
                         </>
                             :
-                            habits.map(habit => <Habit title={habit.title} daysSelecteds={habit.daysSelecteds}/>)
+                        <>
+                            {showNewHabitForm ? <NewHabit newHabit={newHabit} setNewHabit={setNewHabit} saveNewHabit={saveNewHabit}/> : ""}
+                            {habits.map(habit => <Habit title={habit.title} deleteHabit={deleteHabit} daysSelecteds={habit.daysSelecteds}/>)}
+                        </>
                 }
 
             </HabitsContainer>
@@ -79,7 +91,7 @@ function NewHabit({selectDay,setNewHabit, saveNewHabit, newHabit}) {
     )
 }
 
-function Habit({title, daysSelecteds}) {
+function Habit({myKey, title, daysSelecteds, deleteHabit}) {
     const weekdays = ['D','S','T','Q','Q','S','S'];
 
     return (
@@ -93,6 +105,7 @@ function Habit({title, daysSelecteds}) {
                     })
                 }  
             </WeekdaysContainer> 
+            <ion-icon class="trash" onClick={() => deleteHabit(myKey)} name="trash-outline"></ion-icon>
         </HabitContainer>
     )
 

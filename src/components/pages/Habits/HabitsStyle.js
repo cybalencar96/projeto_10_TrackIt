@@ -42,9 +42,20 @@ const HabitContainer = styled.section`
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+
+    position: relative;
+
     & p {
         font-size: 20px;
         color: #666666;
+    }
+
+    & .trash {
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        top: 15px;
+        right: 15px;
     }
 `
 

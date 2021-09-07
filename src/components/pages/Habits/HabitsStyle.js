@@ -11,9 +11,16 @@ const HabitsContainer = styled.main`
         font-size: 23px;
         color: #126BA5;
     }
+
+    & .noHabitsText {
+        color: #666666;
+        font-size: 18px;
+        line-height: 22px;
+        margin-top: 30px;
+    }
 `
 
-const HabitContainer = styled.section`
+const NewHabitContainer = styled.section`
     width: 100%;
     height: 180px;
     margin-top: 20px;
@@ -24,6 +31,23 @@ const HabitContainer = styled.section`
     position: relative;
 `
 
+const HabitContainer = styled.section`
+    width: 100%;
+    height: 90px;
+    margin-top: 20px;
+    border-radius: 5px;
+    background-color: white;
+    padding: 15px 20px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    & p {
+        font-size: 20px;
+        color: #666666;
+    }
+`
+
 const WeekdaysContainer = styled.section`
     display:flex;
     gap:5px;
@@ -32,13 +56,13 @@ const WeekdaysContainer = styled.section`
 const DayContainer = styled.div`
     width: 30px;
     height: 30px;
-    background-color: #FFFFFF;
+    background-color: ${props => props.selected ? '#CFCFCF' : '#FFFFFF'};
     border: 1px solid #D5D5D5;
     border-radius: 5px;
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #DBDBDB;
+    color: ${props => props.selected ? '#FFFFFF' : '#DBDBDB'};
 `
 
 const ButtonsContainer = styled.div`
@@ -54,6 +78,7 @@ const ButtonsContainer = styled.div`
 
 export {
     HabitsContainer,
+    NewHabitContainer,
     HabitContainer,
     WeekdaysContainer,
     DayContainer,

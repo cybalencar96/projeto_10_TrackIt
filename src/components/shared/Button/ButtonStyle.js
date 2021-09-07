@@ -1,14 +1,14 @@
 import styled from 'styled-components'
 
 const ButtonContainer = styled.button`
-    background: ${(props) => props.backGroundColor ? props.backGroundColor : '#52B6FF'};
+    background: ${(props) => props.backgroundColor ? (props) => props.backgroundColor : '#52B6FF'};
     border-radius: 4.63636px;
-    color: white;
+    color: ${props => props.color ? props.color : 'white'};
     width: ${(props) => props.width}px;
     height: ${(props) => props.height}px;
     border: none;
 
-    font-size: 21px;
+    font-size: ${props => props.fontSize ? props.fontSize : 21}px;
     
 
     &:focus {

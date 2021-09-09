@@ -2,22 +2,29 @@ import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
 import Login from './components/pages/Login/Login.js'
 import Register from './components/pages/Register/Register.js'
 import Habits from './components/pages/Habits/Habits'
+import UserContext from './contexts/UserContext'
+import { useState } from 'react'
+
 export default function App () {
+    
+    const [user, setUser] = useState({});
     return (
-        <Router>
-            <Switch>
-                <Route path="/" exact>
-                    <Login/>
-                </Route>
+        <UserContext.Provider value={user}>
+            <Router>
+                <Switch>
+                    <Route path="/" exact>
+                        <Login setUser={setUser}/>
+                    </Route>
 
-                <Route path="/cadastro" exact>
-                    <Register/>
-                </Route>
+                    <Route path="/cadastro" exact>
+                        <Register/>
+                    </Route>
 
-                <Route path="/habitos" exact>
-                    <Habits />
-                </Route>
-            </Switch>
-        </Router>
+                    <Route path="/habitos" exact>
+                        <Habits />
+                    </Route>
+                </Switch>
+            </Router>
+        </UserContext.Provider>
     )
 }

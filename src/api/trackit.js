@@ -2,18 +2,18 @@ import axios from "axios";
 
 const TRACK_API_URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit`
 
-function getHabits(data) {
-    const promise = axios.get(`${TRACK_API_URL}/habits`,data);
+function getHabits(config) {
+    const promise = axios.get(`${TRACK_API_URL}/habits`,config);
     return promise;
 }
 
-function postHabit(data) {
-    const promise = axios.post(`${TRACK_API_URL}/habits`,data);
+function postHabit(data,config) {
+    const promise = axios.post(`${TRACK_API_URL}/habits`,data,config);
     return promise;
 }
 
-function deleteHabit(habitId) {
-    const promise = axios.delete(`${TRACK_API_URL}/habits/${habitId}`);
+function deleteHabit(habitId,config) {
+    const promise = axios.delete(`${TRACK_API_URL}/habits/${habitId}`,config);
     return promise;
 }
 

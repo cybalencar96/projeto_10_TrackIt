@@ -3,28 +3,53 @@ import BottomBar from '../../shared/BottomBar/BottomBar'
 import {HabitsContainer, NewHabitContainer, HabitContainer, WeekdaysContainer, DayContainer, ButtonsContainer} from './HabitsStyle'
 import Button from "../../shared/Button/Button";
 import MyInput from "../../shared/MyInput/MyInput";
-import { useState } from "react";
+import { useContext, useState, useEffect } from "react";
+import UserContext from "../../../contexts/UserContext";
+import { getHabits, postHabit, deleteHabit } from '../../../api/trackit'
 
-let key = 0;
+let key = 0
 
 export default function Habits() {
     const [habits, setHabits] = useState([]);
-    const [newHabit, setNewHabit] = useState({title: "", daysSelecteds:[]});
+    const [newHabit, setNewHabit] = useState({name: "", days:[]});
     const [showNewHabitForm, setShowNewHabitForm] = useState(false);
+    const user = useContext(UserContext);
+    const config = {
+                headers: {
+                    Authorization: `Bearer ${user.token}`
+                }
+            }
 
-    function saveNewHabit(title) {
-        newHabit["key"] = key;
-        newHabit.title = title;
-        key++;
-        setHabits([...habits,newHabit]);
-        setNewHabit({title: "", daysSelecteds:[]});
+    useEffect(() => {
+        getHabits(config).then(res => {
+            setHabits(res.data)
+        })
+    },[]);
+
+
+    
+    function saveNewHabit(name) {
+        newHabit.name = name;
+        const habitBody = {
+            name: newHabit.name,
+            days: newHabit.days
+        }
+
+        postHabit(habitBody, config).then(res => renderHabits())
+        //setHabits([...habits,newHabit]);
+        setNewHabit({name: "", days:[]});
         setShowNewHabitForm(false);
     }
 
-    function deleteHabit(habitId) {
-        setHabits(habits.map(habit => habit.id !== habitId));
+    function removeHabit(habitId) {
+        deleteHabit(habitId,config).then((res => renderHabits()));
     }
 
+    function renderHabits() {
+        getHabits(config).then(res => {
+            setHabits(res.data)
+        })
+    }
     function addHabit() {
         setShowNewHabitForm(() => !showNewHabitForm);
     }
@@ -46,7 +71,7 @@ export default function Habits() {
                             :
                         <>
                             {showNewHabitForm ? <NewHabit newHabit={newHabit} setNewHabit={setNewHabit} saveNewHabit={saveNewHabit}/> : ""}
-                            {habits.map(habit => <Habit title={habit.title} deleteHabit={deleteHabit} daysSelecteds={habit.daysSelecteds}/>)}
+                            {habits.map(habit => <Habit myKey={habit.id} name={habit.name} removeHabit={removeHabit} days={habit.days}/>)}
                         </>
                 }
 
@@ -61,12 +86,12 @@ function NewHabit({selectDay,setNewHabit, saveNewHabit, newHabit}) {
     const [inputValue, setInputValue] = useState("");
     
     function selectDay(dayKey) {
-        if (newHabit.daysSelecteds.includes(dayKey)) {
-            newHabit.daysSelecteds = newHabit.daysSelecteds.filter(daySelected => daySelected !== dayKey)
+        if (newHabit.days.includes(dayKey)) {
+            newHabit.days = newHabit.days.filter(daySelected => daySelected !== dayKey)
         } 
         else {
-            newHabit.daysSelecteds.push(dayKey);
-            newHabit.daysSelecteds.sort((a,b) => a - b);
+            newHabit.days.push(dayKey);
+            newHabit.days.sort((a,b) => a - b);
         }
         
         setNewHabit({...newHabit});
@@ -78,7 +103,7 @@ function NewHabit({selectDay,setNewHabit, saveNewHabit, newHabit}) {
             <WeekdaysContainer>
                 {
                     weekdays.map((weekday,index) => {
-                        const isSelected = newHabit.daysSelecteds.includes(index);
+                        const isSelected = newHabit.days.includes(index);
                         return <Weekday myKey={index} isSelected={isSelected} selectDay={selectDay} day={weekday}/>
                     })
                 }
@@ -91,21 +116,21 @@ function NewHabit({selectDay,setNewHabit, saveNewHabit, newHabit}) {
     )
 }
 
-function Habit({myKey, title, daysSelecteds, deleteHabit}) {
+function Habit({myKey, name, days, removeHabit}) {
     const weekdays = ['D','S','T','Q','Q','S','S'];
 
     return (
         <HabitContainer>
-            <p>{title}</p>
+            <p>{name}</p>
             <WeekdaysContainer>
                 {
                     weekdays.map((day,index) => {
-                        const isSelected = daysSelecteds.includes(index);
+                        const isSelected = days.includes(index);
                         return <Weekday day={day} isSelected={isSelected}/>
                     })
                 }  
             </WeekdaysContainer> 
-            <ion-icon class="trash" onClick={() => deleteHabit(myKey)} name="trash-outline"></ion-icon>
+            <ion-icon class="trash" onClick={() => removeHabit(myKey)} name="trash-outline"></ion-icon>
         </HabitContainer>
     )
 

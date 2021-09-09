@@ -13,7 +13,10 @@ export default function Habits() {
     const [habits, setHabits] = useState([]);
     const [newHabit, setNewHabit] = useState({name: "", days:[]});
     const [showNewHabitForm, setShowNewHabitForm] = useState(false);
+    const [loading, setLoading] = useState(false);
+
     const user = useContext(UserContext);
+    
     const config = {
                 headers: {
                     Authorization: `Bearer ${user.token}`
@@ -29,26 +32,35 @@ export default function Habits() {
 
     
     function saveNewHabit(name) {
+        setLoading(true);
         newHabit.name = name;
         const habitBody = {
             name: newHabit.name,
             days: newHabit.days
         }
 
-        postHabit(habitBody, config).then(res => renderHabits())
-        //setHabits([...habits,newHabit]);
-        setNewHabit({name: "", days:[]});
-        setShowNewHabitForm(false);
+        postHabit(habitBody, config).then(res => {
+            renderHabits();
+            setLoading(false);
+            //setHabits([...habits,newHabit]);
+            setNewHabit({name: "", days:[]});
+            setShowNewHabitForm(false);
+        })
+        .catch(err => {
+            setLoading(false);
+            console.log("erro ao postar habito", err.response)
+        })
+        
     }
 
     function removeHabit(habitId) {
-        deleteHabit(habitId,config).then((res => renderHabits()));
+        if (window.confirm("Deseja realmente deletar o hábito?")) {
+            deleteHabit(habitId,config).then((res => renderHabits()));
+        }
     }
 
     function renderHabits() {
-        getHabits(config).then(res => {
-            setHabits(res.data)
-        })
+        getHabits(config).then(res => setHabits(res.data))
     }
     function addHabit() {
         setShowNewHabitForm(() => !showNewHabitForm);
@@ -65,12 +77,12 @@ export default function Habits() {
                 {
                     habits.length === 0 ?
                         <>
-                            <NewHabit newHabit={newHabit} setNewHabit={setNewHabit} saveNewHabit={saveNewHabit}/>
+                            {showNewHabitForm ? <NewHabit loading={loading} newHabit={newHabit} setNewHabit={setNewHabit} saveNewHabit={saveNewHabit}/> : ""}
                             <p className="noHabitsText">Você não tem nenhum hábito cadastrado ainda. Adicione um hábito para começar a trackear!</p>
                         </>
                             :
                         <>
-                            {showNewHabitForm ? <NewHabit newHabit={newHabit} setNewHabit={setNewHabit} saveNewHabit={saveNewHabit}/> : ""}
+                            {showNewHabitForm ? <NewHabit loading={loading} newHabit={newHabit} setNewHabit={setNewHabit} saveNewHabit={saveNewHabit}/> : ""}
                             {habits.map(habit => <Habit myKey={habit.id} name={habit.name} removeHabit={removeHabit} days={habit.days}/>)}
                         </>
                 }
@@ -81,7 +93,7 @@ export default function Habits() {
     )
 }
 
-function NewHabit({selectDay,setNewHabit, saveNewHabit, newHabit}) {
+function NewHabit({selectDay,setNewHabit, saveNewHabit, newHabit, loading}) {
     const weekdays = ['D','S','T','Q','Q','S','S'];
     const [inputValue, setInputValue] = useState("");
     
@@ -99,7 +111,7 @@ function NewHabit({selectDay,setNewHabit, saveNewHabit, newHabit}) {
 
     return (
         <NewHabitContainer>
-            <MyInput placeholder="nome do hábito" width="100%" onChange={(e) => setInputValue(e.target.value)} value={inputValue}/>
+            <MyInput disabled={loading} placeholder="nome do hábito" width="100%" onChange={(e) => setInputValue(e.target.value)} value={inputValue}/>
             <WeekdaysContainer>
                 {
                     weekdays.map((weekday,index) => {
@@ -109,8 +121,8 @@ function NewHabit({selectDay,setNewHabit, saveNewHabit, newHabit}) {
                 }
             </WeekdaysContainer>
             <ButtonsContainer>
-                <Button backgroundColor="white" color="#52B6FF" fontSize="19">Cancelar</Button>
-                <Button fontSize="19" onClick={() => saveNewHabit(inputValue)}>Salvar</Button>
+                <Button backgroundColor="white" color="#52B6FF" width={88} fontSize="19">Cancelar</Button>
+                <Button fontSize="19" onClick={() => saveNewHabit(inputValue)} loading={loading} width={88} loadingWidth={30}>Salvar</Button>
             </ButtonsContainer>
         </NewHabitContainer>
     )

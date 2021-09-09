@@ -12,8 +12,10 @@ export default function Register() {
     const [name,setName] = useState("");
     const [image,setImage] = useState("");
     const history = useHistory();
+    const [loading,setLoading] = useState(false);
     
     function register() {
+        setLoading(true);
         const body = {
             email,
             password,
@@ -22,18 +24,22 @@ export default function Register() {
         }
 
         signup(body).then(res => {
+            setLoading(false);
             history.push('/')
         })
-        .catch(err => console.error(err))
+        .catch(err => {
+            setLoading(false);
+            console.error(err)
+        })
     }
     return (
         <LoginContainer>
             <Logo width='180' height='180'/>
-            <MyInput placeholder='nome' onChange={e => setName(e.target.value)} value={name}/>
-            <MyInput placeholder='email'onChange={e => setEmail(e.target.value)} value={email}/>
-            <MyInput placeholder='password' onChange={e => setPassword(e.target.value)} value={password}/>
-            <MyInput placeholder='foto' onChange={e => setImage(e.target.value)} value={image}/>
-            <Button width='303' height='45' onClick={register}>Cadastrar</Button>
+            <MyInput disabled={loading} placeholder='nome' onChange={e => setName(e.target.value)} value={name}/>
+            <MyInput disabled={loading} placeholder='email'onChange={e => setEmail(e.target.value)} value={email}/>
+            <MyInput disabled={loading} placeholder='password' onChange={e => setPassword(e.target.value)} value={password}/>
+            <MyInput disabled={loading} placeholder='foto' onChange={e => setImage(e.target.value)} value={image}/>
+            <Button width='303' height='45' onClick={register} loading={loading}>Cadastrar</Button>
             <Link to='/'>Já tem uma conta? Faça login!</Link>
         </LoginContainer>
     )

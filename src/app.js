@@ -2,6 +2,7 @@ import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
 import Login from './components/pages/Login/Login.js'
 import Register from './components/pages/Register/Register.js'
 import Habits from './components/pages/Habits/Habits'
+import Today from './components/pages/Today/Today.js'
 import UserContext from './contexts/UserContext'
 import { useState } from 'react'
 
@@ -18,6 +19,10 @@ export default function App () {
 
                     <Route path="/cadastro" exact>
                         <Register/>
+                    </Route>
+
+                    <Route path="/hoje" exact>
+                        <Today />
                     </Route>
 
                     <Route path="/habitos" exact>

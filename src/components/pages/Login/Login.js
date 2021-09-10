@@ -21,7 +21,7 @@ export default function Login({setUser}) {
         login(body).then(res => {
             setUser(res.data);
             setLoading(false);
-            history.push('/habitos')
+            history.push('/hoje')
         })
         .catch(err => {
             console.log(err); 

@@ -30,6 +30,11 @@ const BottomBarContainer = styled.footer`
         width: 80px;
         height: 80px;
     }
+
+    & .habitHistoryBtns {
+        color: #52B6FF;
+        font-size: 18px
+    }
 `
 
 export {

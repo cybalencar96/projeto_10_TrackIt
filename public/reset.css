@@ -51,6 +51,10 @@ strong {
 	box-sizing: border-box;
 }
 
+a {
+	text-decoration: none;
+}
+
 body {
 	font-family: 'Lexend Deca', sans-serif;
 	background-color: #f1f1f1;

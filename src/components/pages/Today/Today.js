@@ -1,13 +1,15 @@
 import Topbar from "../../shared/Topbar/Topbar"
 import BottomBar from "../../shared/BottomBar/BottomBar"
-import styled from "styled-components"
 import dayjs from "dayjs"
 import {getTodayHabits, checkHabit, uncheckHabit} from '../../../api/trackit'
 import { useEffect, useState, useContext } from "react"
 import UserContext from "../../../contexts/UserContext"
+import { TodayContainer, TodayHabitContainer, TodayWritePart } from './TodayStyle'
+
 
 export default function Today() {
     const day = dayjs();
+    const weekdayName = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado',]
     const date = weekdayName[day.format('d')] + ", " + day.locale('pt-br').format('DD/MM')
     const user = useContext(UserContext);
     const [todayHabits, setTodayHabits] = useState([]);
@@ -110,66 +112,4 @@ function TodayHabit({id,name,done,currentSequence,highestSequence,toggleHabit}) 
     )
 }
 
-const TodayContainer = styled.main`
-    margin: 70px 0;
-    padding: 30px;
 
-    & .title {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 23px;
-        color: #126BA5;
-    }
-
-    & .subtitle{
-        font-size: 18px;
-        color: ${props => props.atLeastOneDone ? '#8FC549' : '#BABABA'};
-        margin-top:8px
-    }
-
-`
-
-const TodayHabitContainer = styled.section`
-    width: 100%;
-    height: 90px;
-    margin-top: 20px;
-    border-radius: 5px;
-    background-color: white;
-    padding: 15px 20px;
-    
-    display: flex;
-    justify-content: space-between;
-
-    & ion-icon {
-        width: 70px;
-        height: 100%;
-        color: ${props => props.done ? '#8FC549' : '#EBEBEB'}
-    }
-`
-
-const TodayWritePart = styled.div`
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
-
-    & .todayTitle {
-        font-size: 20px;
-        color: #666666;
-    }
-
-    & .todaySubtitle {
-        font-size: 13px;
-    }
-
-    & .actual {
-        color: ${props => props.done ? '#8FC549' : '#666666'};  
-    }
-
-    & .record {
-        color: ${props => props.recordIsActual ? '#8FC549' : '#666666'};  
-    }
-`
-
-const weekdayName = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado',]

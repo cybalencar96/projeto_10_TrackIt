@@ -8,7 +8,7 @@ export default function BottomBar() {
     return (
         <BottomBarContainer>
             <Link to="/habitos">
-                <div>
+                <div className='habitHistoryBtns'>
                     Hábitos
                 </div>
             </Link>
@@ -30,7 +30,7 @@ export default function BottomBar() {
                 </div>
             </Link>
             <Link to="/historico">
-                <div>
+                <div className='habitHistoryBtns'>
                     Histórico
                 </div>
             </Link>

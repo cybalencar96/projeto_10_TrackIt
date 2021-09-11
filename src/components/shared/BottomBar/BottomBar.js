@@ -2,9 +2,12 @@ import {BottomBarContainer} from './BottomBarStyle'
 import {Link} from 'react-router-dom'
 import { buildStyles, CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
+import UserContext from '../../../contexts/UserContext';
+import { useContext } from 'react';
 
 export default function BottomBar() {
-    const percentage = 66;
+    const {userProgress} = useContext(UserContext)
+
     return (
         <BottomBarContainer>
             <Link to="/habitos">
@@ -16,7 +19,7 @@ export default function BottomBar() {
                 <div className="progressbarContainer">
                     <div >
                         <CircularProgressbar 
-                            value={percentage}
+                            value={userProgress}
                             background     
                             text='Hoje'                       
                             styles={buildStyles({

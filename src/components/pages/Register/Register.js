@@ -29,11 +29,12 @@ export default function Register() {
             history.push('/')
         })
         .catch(err => {
+            alert('Erro ao registrar. Tente novamente mais tarde.')
             setLoading(false);
-            console.error(err)
+            console.error(err.response)
         })
     }
-    const regex = '^[a-z0-9.]+@[a-z0-9]+\.[a-z]+\.([a-z]+)?$'
+    const regexEmail = '^[a-z0-9.]+@[a-z0-9]+\.[a-z]+\.([a-z]+)?$'
     return (
         <LoginContainer>
             <Logo width='180' height='180'/>
@@ -49,7 +50,7 @@ export default function Register() {
                     required
                     disabled={loading}
                     placeholder='email'
-                    pattern={regex}
+                    pattern={regexEmail}
                     title='Email inválido'
                     onChange={e => setEmail(e.target.value)} 
                     value={email}

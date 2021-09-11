@@ -10,8 +10,9 @@ import { useState } from 'react'
 export default function App () {
     
     const [user, setUser] = useState({});
+    const [userProgress, setUserProgress] = useState(0);
     return (
-        <UserContext.Provider value={user}>
+        <UserContext.Provider value={{user,userProgress,setUserProgress}}>
             <Router>
                 <Switch>
                     <Route path="/" exact>

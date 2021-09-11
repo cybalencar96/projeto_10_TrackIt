@@ -2,7 +2,8 @@ import {Input} from './MyInputStyle'
 
 export default function MyInput({
     width, 
-    disabled, 
+    disabled,
+    value,
     ...otherProps
 }) {
 
@@ -10,6 +11,7 @@ export default function MyInput({
         <Input 
             disabled={disabled} 
             width={width}
+            value={value}
             {...otherProps}
         />
     )

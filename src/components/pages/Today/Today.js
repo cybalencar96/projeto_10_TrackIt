@@ -11,7 +11,7 @@ export default function Today() {
     const day = dayjs();
     const weekdayName = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado',]
     const date = weekdayName[day.format('d')] + ", " + day.locale('pt-br').format('DD/MM')
-    const user = useContext(UserContext);
+    const {user,setUserProgress} = useContext(UserContext);
     const [todayHabits, setTodayHabits] = useState([]);
 
     const config = {
@@ -31,17 +31,22 @@ export default function Today() {
     }
 
     function atLeastOneDone() {
-        return todayHabits.map(tdHab => tdHab.done).includes(true)
+        return todayHabits.map(tdHab => tdHab.done).includes(true);
     }
 
     function calculatePercentage() {
-            const qtdTrues = todayHabits.filter(tdHab => tdHab.done === true).length
-            const qtdTotal = todayHabits.map(tdHab => tdHab.done).length
+        const qtdTrues = todayHabits.filter(tdHab => tdHab.done === true).length
+        const qtdTotal = todayHabits.map(tdHab => tdHab.done).length
+        return (100*qtdTrues/qtdTotal).toFixed(0);
+    }
 
-            if (qtdTrues > 0) {
-                return `${(100*qtdTrues/qtdTotal).toFixed(0)}% dos hábitos concluídos!`
-            }
-            return 'Nenhum hábito concluído ainda'
+    function renderPercentageMessage() {
+        const percentage = calculatePercentage();
+        setUserProgress(percentage)
+        if (todayHabits.filter(tdHab => tdHab.done === true).length > 0) {
+            return `${percentage}% dos hábitos concluídos!`
+        }
+        return 'Nenhum hábito concluído ainda'
     }
 
     function toggleLocalHabit(habitId) {
@@ -78,7 +83,7 @@ export default function Today() {
             <TodayContainer atLeastOneDone={atLeastOneDone()}>
                 <section>
                     <h2 className="title">{date}</h2>
-                    <h3 className="subtitle">{calculatePercentage()}</h3>
+                    <h3 className="subtitle">{renderPercentageMessage()}</h3>
                 </section>
                 {
                     todayHabits.map(todayHabit => {

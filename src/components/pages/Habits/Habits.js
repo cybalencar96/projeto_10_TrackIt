@@ -7,15 +7,14 @@ import { useContext, useState, useEffect } from "react";
 import UserContext from "../../../contexts/UserContext";
 import { getHabits, postHabit, deleteHabit } from '../../../api/trackit'
 
-let key = 0
-
 export default function Habits() {
     const [habits, setHabits] = useState([]);
     const [newHabit, setNewHabit] = useState({name: "", days:[]});
     const [showNewHabitForm, setShowNewHabitForm] = useState(false);
+    const [newHabitInputValue, setNewHabitInputValue] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const user = useContext(UserContext);
+    const {user} = useContext(UserContext);
     
     const config = {
                 headers: {
@@ -31,7 +30,8 @@ export default function Habits() {
 
 
     
-    function saveNewHabit(name) {
+    function saveNewHabit(e,name) {
+        e.preventDefault();
         setLoading(true);
         newHabit.name = name;
         const habitBody = {
@@ -42,6 +42,7 @@ export default function Habits() {
         postHabit(habitBody, config).then(res => {
             renderHabits();
             setLoading(false);
+            setNewHabitInputValue("");
             //setHabits([...habits,newHabit]);
             setNewHabit({name: "", days:[]});
             setShowNewHabitForm(false);
@@ -51,6 +52,10 @@ export default function Habits() {
             console.log("erro ao postar habito", err.response)
         })
         
+    }
+
+    function cancelNewHabit() {
+        setShowNewHabitForm(false);
     }
 
     function removeHabit(habitId) {
@@ -74,17 +79,21 @@ export default function Habits() {
                     <p>Meus Hábitos</p>
                     <Button width="40" height="40" onClick={addHabit}>+</Button>
                 </section>
+                {showNewHabitForm ? 
+                    <NewHabit 
+                        inputValue={newHabitInputValue} 
+                        setInputValue={setNewHabitInputValue} 
+                        loading={loading} newHabit={newHabit} 
+                        setNewHabit={setNewHabit} 
+                        saveNewHabit={saveNewHabit}
+                        cancelNewHabit={cancelNewHabit}
+                    /> 
+                    : ""}
                 {
                     habits.length === 0 ?
-                        <>
-                            {showNewHabitForm ? <NewHabit loading={loading} newHabit={newHabit} setNewHabit={setNewHabit} saveNewHabit={saveNewHabit}/> : ""}
                             <p className="noHabitsText">Você não tem nenhum hábito cadastrado ainda. Adicione um hábito para começar a trackear!</p>
-                        </>
-                            :
-                        <>
-                            {showNewHabitForm ? <NewHabit loading={loading} newHabit={newHabit} setNewHabit={setNewHabit} saveNewHabit={saveNewHabit}/> : ""}
-                            {habits.map(habit => <Habit myKey={habit.id} name={habit.name} removeHabit={removeHabit} days={habit.days}/>)}
-                        </>
+                        :
+                            habits.map(habit => <Habit myKey={habit.id} name={habit.name} removeHabit={removeHabit} days={habit.days}/>)
                 }
 
             </HabitsContainer>
@@ -93,9 +102,8 @@ export default function Habits() {
     )
 }
 
-function NewHabit({selectDay,setNewHabit, saveNewHabit, newHabit, loading}) {
+function NewHabit({selectDay,setNewHabit, saveNewHabit, cancelNewHabit, newHabit, loading,inputValue,setInputValue}) {
     const weekdays = ['D','S','T','Q','Q','S','S'];
-    const [inputValue, setInputValue] = useState("");
     
     function selectDay(dayKey) {
         if (newHabit.days.includes(dayKey)) {
@@ -110,19 +118,19 @@ function NewHabit({selectDay,setNewHabit, saveNewHabit, newHabit, loading}) {
     }
 
     return (
-        <NewHabitContainer>
-            <MyInput disabled={loading} placeholder="nome do hábito" width="100%" onChange={(e) => setInputValue(e.target.value)} value={inputValue}/>
+        <NewHabitContainer onSubmit={(e) => saveNewHabit(e,inputValue)}>
+            <MyInput required disabled={loading} placeholder="nome do hábito" width="100%" onChange={(e) => setInputValue(e.target.value)} value={inputValue}/>
             <WeekdaysContainer>
                 {
                     weekdays.map((weekday,index) => {
                         const isSelected = newHabit.days.includes(index);
-                        return <Weekday myKey={index} isSelected={isSelected} selectDay={selectDay} day={weekday}/>
+                        return <Weekday loading={loading} myKey={index} isSelected={isSelected} selectDay={selectDay} day={weekday}/>
                     })
                 }
             </WeekdaysContainer>
             <ButtonsContainer>
-                <Button backgroundColor="white" color="#52B6FF" width={88} fontSize="19">Cancelar</Button>
-                <Button fontSize="19" onClick={() => saveNewHabit(inputValue)} loading={loading} width={88} loadingWidth={30}>Salvar</Button>
+                <Button fontSize="19" type='submit' loading={loading} width={88} loadingWidth={30}>Salvar</Button>
+                <Button onClick={cancelNewHabit} backgroundColor="white" color="#52B6FF" width={88} fontSize="19">Cancelar</Button>
             </ButtonsContainer>
         </NewHabitContainer>
     )
@@ -138,7 +146,7 @@ function Habit({myKey, name, days, removeHabit}) {
                 {
                     weekdays.map((day,index) => {
                         const isSelected = days.includes(index);
-                        return <Weekday day={day} isSelected={isSelected}/>
+                        return <Weekday day={day} isSelected={isSelected} selectDay={() => {}}/>
                     })
                 }  
             </WeekdaysContainer> 
@@ -148,9 +156,9 @@ function Habit({myKey, name, days, removeHabit}) {
 
 }
 
-function Weekday({day, isSelected,selectDay, myKey}) {
+function Weekday({day, isSelected,selectDay, myKey, loading}) {
     return (
-        <DayContainer onClick={() => selectDay(myKey)} selected={isSelected}>{day}</DayContainer>
+        <DayContainer onClick={loading ? () => {} : () => selectDay(myKey)} selected={isSelected}>{day}</DayContainer>
     )
 }
 

@@ -20,7 +20,7 @@ const HabitsContainer = styled.main`
     }
 `
 
-const NewHabitContainer = styled.section`
+const NewHabitContainer = styled.form`
     width: 100%;
     height: 180px;
     margin-top: 20px;

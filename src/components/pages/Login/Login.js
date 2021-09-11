@@ -12,6 +12,13 @@ export default function Login({setUser}) {
     const [password, setPassword] = useState("");
     const history = useHistory();
     const [loading, setLoading] = useState(false);
+
+    const user = JSON.parse(localStorage.getItem('user'))
+    if (!!user) {
+        setUser(user)
+        history.push('/hoje')
+    }
+
     function sendLogin(e) {
         e.preventDefault();
 
@@ -23,6 +30,9 @@ export default function Login({setUser}) {
         login(body).then(res => {
             setUser(res.data);
             setLoading(false);
+
+            localStorage.setItem('user',JSON.stringify(res.data));
+
             history.push('/hoje')
         })
         .catch(err => {

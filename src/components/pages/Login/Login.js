@@ -12,7 +12,9 @@ export default function Login({setUser}) {
     const [password, setPassword] = useState("");
     const history = useHistory();
     const [loading, setLoading] = useState(false);
-    function sendLogin() {
+    function sendLogin(e) {
+        e.preventDefault();
+
         setLoading(true);
         const body = {
             email: email,
@@ -29,13 +31,33 @@ export default function Login({setUser}) {
             setLoading(false)
         })
     }
+    const regex = '^[a-z0-9.]+@[a-z0-9]+\.[a-z]+\.([a-z]+)?$'
 
     return (
         <LoginContainer>
             <Logo width="182" height="182"/>
-            <MyInput disabled={loading} placeholder="email" onChange={e => setEmail(e.target.value)} value={email}/>
-            <MyInput disabled={loading} placeholder="senha" onChange={e => setPassword(e.target.value)} value={password}/>
-            <Button width="303" height="45" onClick={sendLogin} loading={loading}>Entrar</Button>
+            <form onSubmit={sendLogin}>
+                <MyInput 
+                    required 
+                    name="email"
+                    pattern={regex}
+                    title='Email inválido'
+                    disabled={loading} 
+                    placeholder="email" 
+                    onChange={e => setEmail(e.target.value)} 
+                    value={email}
+                />
+                <MyInput 
+                    required 
+                    name="password"
+                    type="password"
+                    disabled={loading} 
+                    placeholder="senha" 
+                    onChange={e => setPassword(e.target.value)} 
+                    value={password}
+                />
+                <Button width="303" height="45" type='submit' loading={loading}>Entrar</Button>
+            </form>
             <Link to='/cadastro'>Não tem uma conta? Cadastre-se!</Link>
         </LoginContainer>
     )

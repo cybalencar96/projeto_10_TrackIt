@@ -11,12 +11,13 @@ export default function Today() {
     const date = weekdayName[day.format('d')] + ", " + day.locale('pt-br').format('DD/MM')
     const user = useContext(UserContext);
     const [todayHabits, setTodayHabits] = useState([]);
-    const [percentageDone, setPercentageDone] = useState(0);
+
     const config = {
         headers: {
             Authorization: `Bearer ${user.token}`
         }
     }
+
     useEffect(() => {
         renderTodayHabits();
     },[])
@@ -24,7 +25,6 @@ export default function Today() {
     function renderTodayHabits() {
         getTodayHabits(config).then(res => {
             setTodayHabits(res.data)
-            setPercentageDone(calculatePercentage());
         })
     }
 
@@ -34,25 +34,39 @@ export default function Today() {
 
     function calculatePercentage() {
             const qtdTrues = todayHabits.filter(tdHab => tdHab.done === true).length
-
             const qtdTotal = todayHabits.map(tdHab => tdHab.done).length
-            return (100*qtdTrues/qtdTotal).toFixed(0)
+
+            if (qtdTrues > 0) {
+                return `${(100*qtdTrues/qtdTotal).toFixed(0)}% dos hábitos concluídos!`
+            }
+            return 'Nenhum hábito concluído ainda'
+    }
+
+    function toggleLocalHabit(habitId) {
+        todayHabits.map(todayHabit => {
+            if (todayHabit.id === habitId) {todayHabit.done = !todayHabit.done};
+        })
+        setTodayHabits([...todayHabits]);
     }
 
     function toggleHabit(habitId,done) {
+        toggleLocalHabit(habitId);
         if (!done) {
-            checkHabit(habitId,config).then(res => {
-                renderTodayHabits();
-                console.log(res)
+            checkHabit(habitId,config)
+            .then(res => renderTodayHabits())
+            .catch(err => {
+                toggleLocalHabit(habitId);
+                console.log(err.response)
             })
-            .catch(err => console.log(err.response))
         }
+
         if (done) {
-            uncheckHabit(habitId,config).then(res => {
-                renderTodayHabits();
-                console.log(res)
+            uncheckHabit(habitId,config)
+            .then(res => renderTodayHabits())
+            .catch(err => {
+                toggleLocalHabit(habitId);
+                console.log(err.response)
             })
-            .catch(err => console.log(err.response))
         }
     }
 
@@ -62,7 +76,7 @@ export default function Today() {
             <TodayContainer atLeastOneDone={atLeastOneDone()}>
                 <section>
                     <h2 className="title">{date}</h2>
-                    <h3 className="subtitle">{percentageDone !== 0 ? `${percentageDone}% dos hábitos concluídos!` : 'Nenhum hábito concluído ainda'}</h3>
+                    <h3 className="subtitle">{calculatePercentage()}</h3>
                 </section>
                 {
                     todayHabits.map(todayHabit => {
@@ -86,10 +100,10 @@ export default function Today() {
 function TodayHabit({id,name,done,currentSequence,highestSequence,toggleHabit}) {
     return (
         <TodayHabitContainer done={done}>
-            <TodayWritePart>
+            <TodayWritePart done={done} recordIsActual={currentSequence === highestSequence}>
                 <h2 className="todayTitle">{name}</h2>
-                <h2 className="todaySubtitle">Sequência atual: {currentSequence} dia(s)</h2>
-                <h2 className="todaySubtitle">Seu recorde: {highestSequence} dia(s)</h2>
+                <h2 className="todaySubtitle">Sequência atual: <span className='actual'>{currentSequence} dia(s)</span></h2>
+                <h2 className="todaySubtitle">Seu recorde: <span className='record'>{highestSequence} dia(s)</span></h2>
             </TodayWritePart>
             <ion-icon onClick={() => toggleHabit(id,done)} name="checkbox"></ion-icon>
         </TodayHabitContainer>
@@ -147,7 +161,14 @@ const TodayWritePart = styled.div`
 
     & .todaySubtitle {
         font-size: 13px;
-        color: #666666;
+    }
+
+    & .actual {
+        color: ${props => props.done ? '#8FC549' : '#666666'};  
+    }
+
+    & .record {
+        color: ${props => props.recordIsActual ? '#8FC549' : '#666666'};  
     }
 `
 

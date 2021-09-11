@@ -14,7 +14,8 @@ export default function Register() {
     const history = useHistory();
     const [loading,setLoading] = useState(false);
     
-    function register() {
+    function register(e) {
+        e.preventDefault();
         setLoading(true);
         const body = {
             email,
@@ -32,14 +33,45 @@ export default function Register() {
             console.error(err)
         })
     }
+    const regex = '^[a-z0-9.]+@[a-z0-9]+\.[a-z]+\.([a-z]+)?$'
     return (
         <LoginContainer>
             <Logo width='180' height='180'/>
-            <MyInput disabled={loading} placeholder='nome' onChange={e => setName(e.target.value)} value={name}/>
-            <MyInput disabled={loading} placeholder='email'onChange={e => setEmail(e.target.value)} value={email}/>
-            <MyInput disabled={loading} placeholder='password' onChange={e => setPassword(e.target.value)} value={password}/>
-            <MyInput disabled={loading} placeholder='foto' onChange={e => setImage(e.target.value)} value={image}/>
-            <Button width='303' height='45' onClick={register} loading={loading}>Cadastrar</Button>
+            <form onSubmit={register}>
+                <MyInput 
+                    required
+                    disabled={loading} 
+                    placeholder='nome' 
+                    onChange={e => setName(e.target.value)} 
+                    value={name}
+                />
+                <MyInput 
+                    required
+                    disabled={loading}
+                    placeholder='email'
+                    pattern={regex}
+                    title='Email inválido'
+                    onChange={e => setEmail(e.target.value)} 
+                    value={email}
+                />
+                <MyInput 
+                    disabled={loading} 
+                    type='password'
+                    placeholder='password' 
+                    onChange={e => setPassword(e.target.value)} 
+                    value={password}
+                />
+                <MyInput 
+                    required
+                    disabled={loading}
+                    type='url'
+                    placeholder='foto' 
+                    onChange={e => setImage(e.target.value)} 
+                    value={image}
+                />
+                <Button width='303' height='45' type='submit' loading={loading}>Cadastrar</Button>
+            </form>
+            
             <Link to='/'>Já tem uma conta? Faça login!</Link>
         </LoginContainer>
     )

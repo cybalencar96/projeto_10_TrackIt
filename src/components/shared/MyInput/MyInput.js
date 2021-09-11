@@ -1,8 +1,16 @@
 import {Input} from './MyInputStyle'
 
-export default function MyInput({placeholder, onChange, value , width, disabled}) {
+export default function MyInput({
+    width, 
+    disabled, 
+    ...otherProps
+}) {
 
     return (
-        <Input placeholder={placeholder} onChange={onChange} value={value} disabled={disabled} width={width}/>
+        <Input 
+            disabled={disabled} 
+            width={width}
+            {...otherProps}
+        />
     )
 }

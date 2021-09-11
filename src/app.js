@@ -3,6 +3,7 @@ import Login from './components/pages/Login/Login.js'
 import Register from './components/pages/Register/Register.js'
 import Habits from './components/pages/Habits/Habits'
 import Today from './components/pages/Today/Today.js'
+import History from './components/pages/History/History.js'
 import UserContext from './contexts/UserContext'
 import { useState } from 'react'
 
@@ -27,6 +28,10 @@ export default function App () {
 
                     <Route path="/habitos" exact>
                         <Habits />
+                    </Route>
+
+                    <Route path="/historico" exact>
+                        <History />
                     </Route>
                 </Switch>
             </Router>

@@ -48,6 +48,7 @@ export default function Habits() {
             setShowNewHabitForm(false);
         })
         .catch(err => {
+            alert('Erro ao salvar novo hábito. Por favor tente novamente mais tarde.')
             setLoading(false);
             console.log("erro ao postar habito", err.response)
         })
@@ -67,6 +68,7 @@ export default function Habits() {
     function renderHabits() {
         getHabits(config).then(res => setHabits(res.data))
     }
+    
     function addHabit() {
         setShowNewHabitForm(() => !showNewHabitForm);
     }
